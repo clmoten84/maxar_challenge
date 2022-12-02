@@ -9,6 +9,11 @@ public class RequestUtils {
 
     private static final String BASE_URL = "http://localhost:8080/api";
 
+    /**
+     * Executes a GET request to API specified at BASE_URL to fetch a job details UUID
+     * @param resourceId id of resource to fetch
+     * @return job details response object
+     */
     public static JobDetailsAPIResponse executeJobDetailsRequest(int resourceId) {
         // Build instance of web client and set URL to base url
         WebClient webClient = WebClient.builder()

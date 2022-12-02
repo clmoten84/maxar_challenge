@@ -1,12 +1,16 @@
 package com.maxar.challenge_runner.model;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * JobDetails
+ *
+ * Models a list of job UUIDs
+ */
 @Getter
 @Setter
 public class JobDetails {

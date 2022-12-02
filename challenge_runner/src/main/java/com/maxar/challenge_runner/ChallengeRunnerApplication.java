@@ -23,14 +23,27 @@ public class ChallengeRunnerApplication implements CommandLineRunner {
         app.run(args);
     }
 
+    /**
+     * Runner will spawn multiple threads to make concurrent GET requests to fetch job details
+     * from job details API. The responses will be collected in a thread-safe list implementation
+     * and used to populate a JobDetails model. The JobDetails object will be pretty printed as a
+     * JSON representation at program end.
+     * @param args 1 expected arg (number of GET requests to make to job details API)
+     */
     @Override
     public void run(String... args) throws Exception {
-        int numExecutions = 1500;
+        int numExecutions;
+        try {
+            numExecutions = Integer.parseInt(args[0]);
+        }
+        catch (NumberFormatException ex) {
+            throw new IllegalArgumentException("Number of executions argument must be parsable to an integer...");
+        }
 
+        // Use thread-safe synchronized list to collect responses from each thread
         List<String> jobIds = Collections.synchronizedList(new ArrayList<>());
-
         for (int i = 0; i < numExecutions; i++) {
-            // Spawn a thread and execute API request in a thread
+            // Spawn a new thread and execute a GET request to the job details API
             int resourceId = i;
             Thread thread = new Thread(() -> {
                 JobDetailsAPIResponse response = RequestUtils.executeJobDetailsRequest(resourceId + 1);
@@ -43,7 +56,7 @@ public class ChallengeRunnerApplication implements CommandLineRunner {
             thread.join();
         }
 
-        // Add response to JobDetails list and pretty print JobDetails JSON object
+        // Add collected job UUIDs to JobDetails list and pretty print JobDetails JSON object
         JobDetails jobDetails = new JobDetails(jobIds);
         ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
         System.out.printf("Number of Job IDs fetched vs. Number of API requests: %d / %d\n", jobIds.size(), numExecutions);

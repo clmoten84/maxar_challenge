@@ -32,17 +32,24 @@ public class ChallengeRunnerApplication implements CommandLineRunner {
      */
     @Override
     public void run(String... args) throws Exception {
-        int numExecutions;
-        try {
-            numExecutions = Integer.parseInt(args[0]);
+        int numRequests;
+        if (args.length == 0) {
+            // Default number of GET requests to make
+            numRequests = 1000;
         }
-        catch (NumberFormatException ex) {
-            throw new IllegalArgumentException("Number of executions argument must be parsable to an integer...");
+        else {
+            // First arg should be the number of GET requests to make
+            try {
+                numRequests = Integer.parseInt(args[0]);
+            }
+            catch (NumberFormatException ex) {
+                throw new IllegalArgumentException("Number of executions argument must be parsable to an integer...");
+            }
         }
 
         // Use thread-safe synchronized list to collect responses from each thread
         List<String> jobIds = Collections.synchronizedList(new ArrayList<>());
-        for (int i = 0; i < numExecutions; i++) {
+        for (int i = 0; i < numRequests; i++) {
             // Spawn a new thread and execute a GET request to the job details API
             int resourceId = i;
             Thread thread = new Thread(() -> {
@@ -59,7 +66,7 @@ public class ChallengeRunnerApplication implements CommandLineRunner {
         // Add collected job UUIDs to JobDetails list and pretty print JobDetails JSON object
         JobDetails jobDetails = new JobDetails(jobIds);
         ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-        System.out.printf("Number of Job IDs fetched vs. Number of API requests: %d / %d\n", jobIds.size(), numExecutions);
+        System.out.printf("Number of Job IDs fetched vs. Number of API requests: %d / %d\n", jobIds.size(), numRequests);
         System.out.println(mapper.writeValueAsString(jobDetails));
     }
 }

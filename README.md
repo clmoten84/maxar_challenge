@@ -19,7 +19,8 @@ $JAVA_HOME/bin/java -jar challenge_api/build/challenge_api-0.0.1-SNAPSHOT.jar
 ```
 
 Once the API application is running, you can execute the Runner application and specify how many `GET` requests to make
-to the API using this command:
+to the API using the command below (**NOTE** - if you don't specify the number of requests to execute, the program will issue
+1000 requests to the API by default):
 ```
 $JAVA_HOME/bin/java -jar challenge_runner/build/challenge_runner-0.0.1-SNAPSHOT.jar <number_of_requests_to_make>
 ```
